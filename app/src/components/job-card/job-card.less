@@ -1,0 +1,94 @@
+.job-card {
+  position: relative;
+  background: #fff;
+  border: 2rpx solid #e5e6eb;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  padding-bottom: 24rpx;
+
+  &:active {
+    border-color: #3b82f6;
+  }
+
+  &__title {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 30rpx;
+    font-weight: 600;
+    color: #1f2329;
+  }
+
+  &__line {
+    display: flex;
+    align-items: center;
+  }
+
+  &__desc {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 24rpx;
+    color: #86909c;
+  }
+
+  &__price {
+    flex-shrink: 0;
+    margin-left: 16rpx;
+    font-size: 32rpx;
+    font-weight: 600;
+    color: #fd3b3b;
+    white-space: nowrap;
+  }
+
+  &__price-unit {
+    flex-shrink: 0;
+    margin-left: 4rpx;
+    font-size: 22rpx;
+    color: #fd3b3b;
+    white-space: nowrap;
+  }
+
+  &__address-icon {
+    flex-shrink: 0;
+    font-size: 28rpx;
+    margin-right: 6rpx;
+  }
+
+  &__action {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    margin-left: 16rpx;
+    margin-top: -10rpx;
+    height: 56rpx;
+    padding: 0 28rpx;
+    box-sizing: border-box;
+    background: #07BE61;
+    border-radius: 28rpx;
+    font-size: 28rpx;
+    color: #fff;
+    white-space: nowrap;
+    border: 2rpx solid transparent;
+
+    &:active {
+      border-color: #3b82f6;
+      color: #3b82f6;
+    }
+
+    &--danger {
+      background: #fff;
+      border-color: #fd3b3b;
+      color: #fd3b3b;
+    }
+  }
+
+  &__action-icon {
+    flex-shrink: 0;
+    font-size: 28rpx;
+    margin-right: 6rpx;
+  }
+}

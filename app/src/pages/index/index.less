@@ -1,0 +1,137 @@
+.index {
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 0 20rpx;
+  background: url('../../assets/img/background.jpeg') center / cover no-repeat;
+
+  &__search {
+    display: flex;
+    align-items: center;
+  }
+
+  &__search-input {
+    flex: 1;
+    height: 72rpx;
+    line-height: 72rpx;
+    padding: 0 24rpx;
+    box-sizing: border-box;
+    background: #fff;
+    border-radius: 36rpx;
+    font-size: 26rpx;
+    color: #1f2329;
+  }
+
+  &__search-placeholder {
+    color: #c0c4cc;
+    font-size: 26rpx;
+  }
+
+  &__search-btn {
+    margin-left: 16rpx;
+    height: 72rpx;
+    line-height: 72rpx;
+    padding: 0 28rpx;
+    box-sizing: border-box;
+    background: #07BE61;
+    border-radius: 36rpx;
+    font-size: 26rpx;
+    color: #fff;
+    white-space: nowrap;
+
+    &:active {
+      border-color: #3b82f6;
+      color: #3b82f6;
+    }
+  }
+
+  &__search-btn--icon {
+    width: 72rpx;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__search-icon {
+    display: block;
+    font-size: 40rpx;
+    line-height: 1;
+  }
+
+  &__action-icon {
+    flex-shrink: 0;
+    font-size: 36rpx;
+    margin-right: 8rpx;
+  }
+
+  &__row {
+    display: flex;
+    margin-top: 24rpx;
+  }
+
+  &__action {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 88rpx;
+    box-sizing: border-box;
+    background: #3072f0;
+    border-radius: 16rpx;
+    font-size: 30rpx;
+    color: #fff;
+
+    &-history {
+      background: #07BE61;
+    }
+
+    &:first-child {
+      margin-right: 24rpx;
+    }
+
+    &:active {
+      border-color: #3b82f6;
+      color: #3b82f6;
+    }
+  }
+
+  &__swiper {
+    height: 222rpx;
+    margin-top: 24rpx;
+  }
+
+  &__section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 32rpx 0 20rpx;
+  }
+
+  &__section-title {
+    font-size: 30rpx;
+    font-weight: 600;
+    color: #1f2329;
+  }
+
+  &__section-more {
+    display: flex;
+    align-items: center;
+    font-size: 26rpx;
+    color: #86909c;
+
+    &:active {
+      color: #3b82f6;
+    }
+  }
+
+  &__section-more-icon {
+    font-size: 22rpx;
+    margin-left: 4rpx;
+  }
+
+  &__list-item {
+    &:not(:last-child) {
+      margin-bottom: 20rpx;
+    }
+  }
+}

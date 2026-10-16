@@ -1,0 +1,40 @@
+.qr-code-modal {
+  &__poster {
+    margin-top: 16rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+  }
+
+  &__canvas {
+    width: 285rpx;
+    height: 430rpx;
+  }
+
+  &__hint {
+    margin-top: 24rpx;
+    font-size: 22rpx;
+    color: #86909c;
+  }
+
+  &__save-btn {
+    width: 100%;
+    margin-top: 32rpx;
+    height: 84rpx;
+    line-height: 84rpx;
+    text-align: center;
+    background: #07BE61;
+    color: #fff;
+    border-radius: 42rpx;
+    font-size: 30rpx;
+
+    &:active {
+      opacity: 0.85;
+    }
+
+    &--loading {
+      opacity: 0.6;
+    }
+  }
+}

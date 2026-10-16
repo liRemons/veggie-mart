@@ -1,0 +1,36 @@
+// 通用遮罩：压暗过渡统一在这里；场景样式（z-index、背景色、安全区等）
+// 由使用方传入的 className 覆写
+.mask {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    visibility 0s linear 0.25s;
+
+  // 贴底内容（底部面板）
+  &--end {
+    align-items: flex-end;
+  }
+
+  &--on {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition:
+      opacity 0.25s ease,
+      visibility 0s;
+  }
+}

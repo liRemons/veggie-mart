@@ -1,0 +1,241 @@
+@import '../styles/iconfont.less';
+// custom tabBar 独立构建，不打包 mask.tsx 组件内的 import './mask.less'，
+// 与 iconfont 相同模式直接引入通用 Mask 基础样式（需位于下方 .tab-bar__mask 场景覆写之前）
+@import '../components/mask/mask.less';
+
+.tab-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 101; // 层内层级：mask(100) < tab-bar(101) < page-mask(102) < close(103)
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.5);
+  border-top: 2rpx solid rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  padding: 12rpx 16rpx 0;
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+  transition: opacity 0.25s ease;
+
+  // 页面弹层打开时：tabBar 本体整体压暗 50%（与背景页面 modal 遮罩观感一致，
+  // 绿加号由 __plus--hidden 单独淡出，避免半透明绿与压暗栏体割裂），
+  // 自身半透明白底与模糊移除，背景透出与页面相同的压暗内容
+  &--masked {
+    opacity: 0.5;
+    background: transparent;
+    border-top-color: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    pointer-events: none;
+  }
+
+  &__item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 88rpx;
+
+    &:active {
+      opacity: 0.7;
+    }
+  }
+
+  &__label {
+    font-size: 24rpx;
+    color: #4e5969;
+  }
+
+  &__icon {
+    font-size: 44rpx;
+    line-height: 1;
+    color: #4e5969;
+    margin-bottom: 4rpx;
+  }
+
+  &__item--active {
+    .tab-bar__label {
+      font-size: 26rpx;
+      font-weight: 600;
+      color: #1d2129;
+    }
+
+    .tab-bar__icon {
+      color: #1d2129;
+    }
+  }
+
+  &__center {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__plus {
+    position: relative;
+    top: -24rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 96rpx;
+    height: 96rpx;
+    box-sizing: border-box;
+    border-radius: 50%;
+    background: #07BE61;
+    box-shadow: 0 8rpx 20rpx rgba(29, 33, 41, 0.3);
+    transition: opacity 0.25s ease; // 与 --masked 压暗过渡同时长
+
+    &:active {
+      opacity: 0.85;
+    }
+
+    // 页面弹层打开时淡出：0.5 透明度下绿钮会与浅色背景混出发亮的浅绿，
+    // 比图标更扎眼，直接淡出与面板打开的隐藏行为保持一致（占位保留，栏高不变）
+    &--hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+
+  &__plus-icon {
+    font-size: 44rpx;
+    font-weight: 300;
+    line-height: 1;
+    color: #fff;
+  }
+
+  // 蒙层一级的关闭按钮（面板打开时 tabBar 为 pointer-events: none，栏内关闭无效）：
+  // 须与加号圆心重合：栏内容区高 = 12(上 padding) + 96(行高，被 96rpx 加号撑高) = 108rpx；
+  // 加号视觉中心距栏顶 = 12 + 48(行中) - 24(凸起) = 36rpx，距屏底 = 108 + safe - 36 = safe + 72rpx；
+  // 96rpx 圆底边 = 中心 - 48 => bottom = safe-area + 24rpx
+  &__close {
+    position: fixed;
+    left: 50%;
+    bottom: calc(constant(safe-area-inset-bottom) + 24rpx);
+    bottom: calc(env(safe-area-inset-bottom) + 24rpx);
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 96rpx;
+    height: 96rpx;
+    box-sizing: border-box;
+    border-radius: 50%;
+    background: #4e5969;
+    box-shadow: 0 8rpx 20rpx rgba(29, 33, 41, 0.3);
+    z-index: 103; // 最上层：mask(100) < tab-bar(101) < page-mask(102) < close(103)
+
+    &:active {
+      opacity: 0.85;
+    }
+  }
+
+  // 通用 Mask（components/mask）的 tabBar 场景覆写：定位、对齐、压暗过渡与 blur 由
+  // .mask/.mask--on/.mask--end 承担，这里只留 tabBar 层特有的覆写
+  // （z-index 需低于栏本体，底边贴安全区上方，压暗更重一档）
+  &__mask {
+    z-index: 100; // 层内层级：mask(100) < tab-bar(101) < page-mask(102) < close(103)
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  // 点击拦截层：微信自定义 tabBar 在页面上层，页面遮罩盖不住，此层透明拦截弹层打开时的 tab 点击
+  // （压暗改由 .tab-bar--masked 自身的 opacity 承担，避免双层遮罩观感）
+  &__page-mask {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    // 120rpx = tabBar 内容行高 96（被 96rpx 加号撑高）+ 24（加号上凸），完整盖住加号
+    height: calc(120rpx + constant(safe-area-inset-bottom));
+    height: calc(120rpx + env(safe-area-inset-bottom));
+    z-index: 102; // 高于 tab-bar(101)，连同 + 按钮一起盖住
+    background: transparent;
+    visibility: hidden;
+    transition: visibility 0s linear 0.25s;
+
+    &--on {
+      visibility: visible;
+      transition: visibility 0s;
+    }
+  }
+
+  &__sheet {
+    width: 100%;
+    padding: 40rpx 20rpx 208rpx;
+    box-sizing: border-box;
+    transform: translateY(100%);
+    transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  &__sheet-title {
+    display: block;
+    color: #fff;
+    font-size: 28rpx;
+    font-weight: 600;
+    margin-bottom: 32rpx;
+  }
+
+  &__sheet-options {
+    display: flex;
+    gap: 40rpx;
+  }
+
+  &__sheet-option {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20rpx;
+    padding: 30rpx 0;
+    background: #fff;
+    border: 2rpx solid #c9cdd4;
+    border-radius: 12rpx;
+    font-size: 28rpx;
+    color: #1d2129;
+    opacity: 0;
+    transform: translateY(32rpx) scale(0.8);
+    transition:
+      transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+      opacity 0.22s ease;
+
+    &:active {
+      background: #f2f3f5;
+    }
+  }
+
+  &__sheet-option-icon {
+    font-size: 48rpx;
+    line-height: 1;
+  }
+}
+
+// 打开状态（.mask--on 由 Mask 组件打开时附加到遮罩元素）：
+// 面板带过冲曲线回弹上滑，两个选项交错弹入
+.tab-bar__mask.mask--on {
+  .tab-bar__sheet {
+    transform: translateY(0);
+  }
+
+  .tab-bar__sheet-option {
+    opacity: 1;
+    transform: none;
+
+    &:nth-child(1) {
+      transition-delay: 0.08s;
+    }
+
+    &:nth-child(2) {
+      transition-delay: 0.16s;
+    }
+
+    &:active {
+      transform: scale(0.94);
+    }
+  }
+}

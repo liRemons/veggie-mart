@@ -1,0 +1,45 @@
+.modal {
+  // 遮罩本体由通用 Mask 组件（components/mask）渲染，
+  // 此处 className 仅作场景钩子，无场景专属样式
+
+  &__card {
+    width: 620rpx;
+    box-sizing: border-box;
+    padding: 32rpx 32rpx;
+    background: #fff;
+    border-radius: 24rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+    transition:
+      opacity 0.25s ease,
+      transform 0.25s ease;
+
+    &--active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  &__head {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__title {
+    font-size: 32rpx;
+    font-weight: bold;
+    color: #1f2329;
+  }
+
+  &__close {
+    font-size: 44rpx;
+    line-height: 1;
+    color: #86909c;
+    padding: 8rpx;
+  }
+}
