@@ -8,7 +8,9 @@ export default defineConfig<'vite'>(async (merge, { command, mode }) => {
   const baseConfig: UserConfigExport<'vite'> = {
     projectName: 'app',
     date: '2026-10-13',
-    designWidth: 750,
+    // NutUI 4 的 CSS 按 375 画布写 px：designWidth=375 时 1px→2rpx，NutUI 尺寸一次到位
+    // 项目自身样式主体是 rpx（750 画布），不受此值影响
+    designWidth: 375,
     deviceRatio: {
       640: 2.34 / 2,
       750: 1,

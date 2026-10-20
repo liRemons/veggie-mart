@@ -12,18 +12,16 @@
  *   2. 在 app/ 目录下执行：npm run icons:gen
  */
 import { Image, Text } from '@tarojs/components'
-import type { CSSProperties } from 'react'
 import { ICONS } from './icons';
 
 interface IconProps {
   name: string
   size?: number
   className?: string
-  style?: CSSProperties;
   onClick?: () => void;
 }
 
-export default function Icon ({ name, size = 48, className, style, onClick }: IconProps) {
+export default function Icon ({ name, size = 48, className, onClick }: IconProps) {
   const src = ICONS[name]
   const cls = [className].filter(Boolean).join(' ')
   if (src) {
@@ -32,10 +30,10 @@ export default function Icon ({ name, size = 48, className, style, onClick }: Ic
         src={src}
         mode='aspectFit'
         className={cls}
-        style={{ width: `${size}rpx`, height: `${size}rpx`, ...style }}
+        style={{ width: `${size}rpx`, height: `${size}rpx` }}
         onClick={onClick}
       />
     )
   }
-  return <Text className={`iconfont icon-${name} ${cls}`.trim()} style={{ fontSize: `${size}rpx`, lineHeight: 1, ...style }} onClick={onClick} />
+  return <Text className={`iconfont icon-${name} ${cls}`.trim()} style={{ fontSize: `${size}rpx`, lineHeight: 1 }} onClick={onClick} />
 }

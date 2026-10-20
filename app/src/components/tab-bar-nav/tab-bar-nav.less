@@ -1,0 +1,111 @@
+// 页面层 Tab 栏：NutUI Tabbar 根节点（.nut-tabbar）样式覆写
+// 整页压暗与 tab 点击拦截由页面层自绘遮罩（publish-sheet__bg，z 1100）覆盖本栏完成
+// （NutUI Overlay 无法可靠覆盖本栏，已透传；自绘遮罩保证整屏含底部栏区全覆盖），
+// 因此本栏 z 一律压到 100，并用 !important 对抗组件库可能行内设置的 z；不做任何自绘遮罩/拦截/压暗
+.tab-bar-nav {
+  z-index: 100 !important;
+  background: rgba(255, 255, 255, 0.5);
+  border-top: 2rpx solid rgba(255, 255, 255, 0.6);
+  box-shadow: none;
+  // 用 rpx：designWidth=375 时 px 会被 pxtransform 按 1px→2rpx 折算，改 rpx 保持现观感
+  -webkit-backdrop-filter: blur(12rpx);
+  backdrop-filter: blur(12rpx);
+  padding: 12rpx 0 0; // 底部安全区由 NutUI 内建 SafeArea（fixed 时自动追加）承担
+
+  .nut-tabbar-wrap {
+    // = 原自定义栏内容行高（被 96rpx 加号撑高后的 96 + 行内余量 12）
+    height: 108rpx;
+  }
+
+  .nut-tabbar-item {
+    padding: 0;
+    background: transparent;
+
+    &:active {
+      opacity: 0.7;
+    }
+  }
+
+  // 普通项（颜色由 NutUI 行内 activeColor/inactiveColor 承担：#1d2129 / #4e5969）
+  .tab-bar-nav__icon {
+    margin-bottom: 4rpx;
+  }
+
+  .nut-tabbar-item-text {
+    margin-top: 0;
+    font-size: 24rpx;
+    line-height: 1.2;
+  }
+
+  .nut-tabbar-item--active .nut-tabbar-item-text {
+    font-size: 26rpx;
+    font-weight: 600;
+  }
+
+  // 中心「+」槽位：NutUI 的 Badge 包裹层不允许多余盒模型
+  &__plus-slot {
+    justify-content: center;
+
+    .nut-badge {
+      padding: 0;
+    }
+  }
+
+  &__plus {
+    position: relative;
+    top: -24rpx; // 凸出栏体上沿，与自定义栏原加号位一致
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 96rpx;
+    height: 96rpx;
+    box-sizing: border-box;
+    border-radius: 50%;
+    background: #07be61;
+    box-shadow: 0 8rpx 20rpx rgba(29, 33, 41, 0.3);
+
+    &:active {
+      opacity: 0.85;
+    }
+
+    // 面板打开时加号隐藏（占位保留、栏高不变）；压暗/拦截由页面层自绘遮罩 publish-sheet__bg 承担
+    &--hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+
+  &__plus-icon {
+    color: #fff;
+    font-weight: 300;
+  }
+}
+
+// 面板关闭按钮：与加号同心——+ 圆心在 wrap 底以上 108/2+24=78rpx 处，
+// 96rpx 按钮底边 = 78 - 96/2 = 30rpx（safe 区由 env/constant 与栏内 SafeArea 同一基准）
+.fab-close {
+  position: fixed;
+  left: 50%;
+  bottom: calc(constant(safe-area-inset-bottom) + 30rpx);
+  bottom: calc(env(safe-area-inset-bottom) + 30rpx);
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 96rpx;
+  height: 96rpx;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background: #4e5969;
+  color: #fff;
+  box-shadow: 0 8rpx 20rpx rgba(29, 33, 41, 0.3);
+  z-index: 9999; // 高于自绘遮罩 1100 与面板本体 1200，保证 X 常驻最上层可点
+
+  &:active {
+    opacity: 0.85;
+  }
+
+  &__icon {
+    font-weight: 300;
+  }
+}

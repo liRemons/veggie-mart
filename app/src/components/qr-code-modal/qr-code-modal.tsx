@@ -2,8 +2,8 @@ import { View, Text, Canvas } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { useEffect, useRef, useState } from 'react'
 import QRCode from 'uqrcodejs'
+import { Button, Dialog } from '@nutui/nutui-react-taro'
 import Modal from '../modal/modal'
-import { TABBAR_MASK_EVENT } from '../../utils/tabbar'
 import './qr-code-modal.less'
 
 // 写死的用户名 / 联系方式 / 地址，不支持编辑（占位值，后续可接用户资料接口）
@@ -157,13 +157,8 @@ export default function QrCodeModal({ visible, onClose }: QrCodeModalProps) {
   // 绘制链路完成态：保存前需 await，避免导出半绘制图
   const drawnRef = useRef<Promise<void> | null>(null)
   const [saving, setSaving] = useState(false)
-
-  // 页面遮罩在页面层，盖不住微信自定义 tabBar（页面之上的独立层），
-  // 弹层开/关时通知 tabBar 层渲染/隐藏同高遮罩（H5 不使用 custom-tab-bar 目录，无需通知）
-  useEffect(() => {
-    if (Taro.getEnv() !== Taro.ENV_TYPE.WEAPP) return
-    Taro.eventCenter.trigger(TABBAR_MASK_EVENT, visible)
-  }, [visible])
+  // 相册授权被拒时打开 NutUI 受控弹窗引导去设置
+  const [showAuthDialog, setShowAuthDialog] = useState(false)
 
   const drawPoster = (node: CanvasNode, cssW: number, cssH: number) => {
     const ctx = node.getContext('2d')
@@ -407,14 +402,7 @@ export default function QrCodeModal({ visible, onClose }: QrCodeModalProps) {
         .catch((e) => {
           const errMsg = ((e as { errMsg?: string }) || {}).errMsg || ''
           if (errMsg.includes('auth deny') || errMsg.includes('authorize') || errMsg.includes('scope')) {
-            Taro.showModal({
-              title: '提示',
-              content: '需要您授权保存图片到相册',
-              confirmText: '去设置',
-              success: (r) => {
-                if (r.confirm) Taro.openSetting()
-              }
-            })
+            setShowAuthDialog(true)
           } else {
             Taro.showToast({ title: '保存失败', icon: 'none' })
           }
@@ -457,28 +445,48 @@ export default function QrCodeModal({ visible, onClose }: QrCodeModalProps) {
   }
 
   return (
-    <Modal visible={visible} onClose={onClose} beforeClose={beforeClose} title='我的名片'>
-      <View className='qr-code-modal__poster'>
-        {/* weapp 的 canvas 2d 是 native 层组件：不跟随祖先的 opacity/transform 退出动画，
-            自身挂 visibility/opacity 也不同步（实测无效），唯一可靠手段是销毁节点——
-            关闭时（!visible）同一帧卸载，native 层立即消失，卡片继续播退出动画；
-            打开时重新挂载，走现有"延迟查询 + 重试"的绘制链路重绘 */}
-        {visible && (
-          <Canvas
-            type='2d'
-            id={CANVAS_ID}
-            canvasId={CANVAS_ID}
-            className='qr-code-modal__canvas'
-          />
-        )}
-        <Text className='qr-code-modal__hint'>保存图片分享给好友</Text>
-      </View>
-      <View
-        className={`qr-code-modal__save-btn${saving ? ' qr-code-modal__save-btn--loading' : ''}`}
-        onClick={saving ? undefined : handleSave}
-      >
-        {saving ? '保存中…' : '保存图片'}
-      </View>
-    </Modal>
+    <>
+      <Modal visible={visible} onClose={onClose} beforeClose={beforeClose} title='我的名片'>
+        <View className='qr-code-modal__poster'>
+          {/* weapp 的 canvas 2d 是 native 层组件：不跟随祖先的 opacity/transform 退出动画，
+              自身挂 visibility/opacity 也不同步（实测无效），唯一可靠手段是销毁节点——
+              关闭时（!visible）同一帧卸载，native 层立即消失，卡片继续播退出动画；
+              打开时重新挂载，走现有"延迟查询 + 重试"的绘制链路重绘 */}
+          {visible && (
+            <Canvas
+              type='2d'
+              id={CANVAS_ID}
+              canvasId={CANVAS_ID}
+              className='qr-code-modal__canvas'
+            />
+          )}
+          <Text className='qr-code-modal__hint'>保存图片分享给好友</Text>
+        </View>
+        {/* NutUI 按钮：loading 态自带禁用与转圈，对应原「保存中…」表现 */}
+        <Button
+          block
+          className='qr-code-modal__save-btn'
+          color='#07BE61'
+          shape='round'
+          size='large'
+          loading={saving}
+          disabled={saving}
+          onClick={handleSave}
+        >
+          {saving ? '保存中…' : '保存图片'}
+        </Button>
+      </Modal>
+      {/* 相册授权被拒时引导去设置（原 Taro.showModal 改为 NutUI 受控弹窗） */}
+      <Dialog
+        visible={showAuthDialog}
+        title='提示'
+        content='需要您授权保存图片到相册'
+        confirmText='去设置'
+        closeIcon={false}
+        closeOnOverlayClick={false}
+        onClose={() => setShowAuthDialog(false)}
+        onConfirm={() => Taro.openSetting()}
+      />
+    </>
   )
 }

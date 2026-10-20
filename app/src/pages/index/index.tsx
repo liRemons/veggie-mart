@@ -1,10 +1,12 @@
 import { View, Text, Input, Swiper, SwiperItem } from '@tarojs/components'
-import Taro, { useDidShow, useLoad } from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
 import { useState } from 'react'
-import { TABBAR_CHANGE_EVENT } from '../../utils/tabbar'
+import { PUBLISH_TYPE_KEY, PUBLISH_URL, TabItem } from '../../utils/tabbar'
 import { openDetail } from '../../utils/detail'
 import ProductCard from '../../components/product-card/product-card'
 import QrCodeModal from '../../components/qr-code-modal/qr-code-modal'
+import PublishSheet, { PublishType } from '../../components/publish-sheet/publish-sheet'
+import TabBarNav, { FabClose } from '../../components/tab-bar-nav/tab-bar-nav'
 import Icon from '../../components/icons/Icon'
 import './index.less'
 
@@ -26,14 +28,28 @@ const PURCHASES = [
 
 export default function Index() {
   const [qrVisible, setQrVisible] = useState(false)
-
-  useLoad(() => {
-    console.log('Page loaded.')
-  })
+  // 「选择发布的类型」底部面板：本页 NutUI Popup（弹层标准宿主），栏内加号经 onPublish 直接控制本源
+  const [pubSheetVisible, setPubSheetVisible] = useState(false)
 
   useDidShow(() => {
-    Taro.eventCenter.trigger(TABBAR_CHANGE_EVENT, 'home')
+    Taro.hideTabBar({ animation: false })
   })
+
+  const handleChoosePublishType = (type: PublishType) => {
+    setPubSheetVisible(false)
+    // storage 由发布页 useDidShow 消费，跨页送达选中类型
+    Taro.setStorageSync(PUBLISH_TYPE_KEY, type)
+    Taro.switchTab({ url: PUBLISH_URL })
+  }
+
+  const handleTab = (tab: TabItem) => {
+    if (tab.key === 'home') return
+    if (!tab.url) {
+      Taro.showToast({ title: `「${tab.label}」功能开发中`, icon: 'none' })
+      return
+    }
+    Taro.switchTab({ url: tab.url })
+  }
 
   const handleComingSoon = (name: string) => {
     Taro.showToast({ title: `「${name}」功能开发中`, icon: 'none' })
@@ -112,6 +128,15 @@ export default function Index() {
       </View>
 
       <QrCodeModal visible={qrVisible} onClose={() => setQrVisible(false)} />
+      <PublishSheet visible={pubSheetVisible} onChoose={handleChoosePublishType} />
+      {/* 面板关闭按钮：位于 NutUI Overlay 之上（z 9999），与加号同位 */}
+      {pubSheetVisible ? <FabClose onClick={() => setPubSheetVisible(false)} /> : null}
+      <TabBarNav
+        active='home'
+        publishing={pubSheetVisible}
+        onTab={handleTab}
+        onPublish={() => setPubSheetVisible(true)}
+      />
     </View>
   )
 }

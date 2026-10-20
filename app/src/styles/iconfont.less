@@ -7,7 +7,8 @@
 
 .iconfont {
   font-family: "iconfont" !important;
-  font-size: 16px;
+  // 用 rpx：designWidth=375 时 px 会被 pxtransform 按 1px→2rpx 折算，改 rpx 保持现观感
+  font-size: 16rpx;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

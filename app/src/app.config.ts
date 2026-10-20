@@ -12,7 +12,12 @@ export default defineAppConfig({
     navigationBarTextStyle: 'black'
   },
   tabBar: {
-    custom: true,
+    position: 'bottom',
+    color: '#4e5969',
+    selectedColor: '#07be61',
+    backgroundColor: '#ffffff',
+    borderStyle: 'white',
+    // 系统条仅承担 switchTab 路由注册；视觉由页面层 NutUI Tabbar（components/tab-bar-nav）完整覆盖
     list: [
       { pagePath: 'pages/index/index', text: '商机' },
       { pagePath: 'pages/publish/publish', text: '我发布的' }

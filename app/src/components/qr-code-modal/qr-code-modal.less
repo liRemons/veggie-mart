@@ -18,23 +18,17 @@
     color: #86909c;
   }
 
+  // NutButton 承载：绿底由 color prop 行内注入，这里只调 尺寸/圆角/字重 贴合原按钮
   &__save-btn {
     width: 100%;
     margin-top: 32rpx;
     height: 84rpx;
-    line-height: 84rpx;
-    text-align: center;
-    background: #07BE61;
-    color: #fff;
     border-radius: 42rpx;
     font-size: 30rpx;
+    padding: 0 48rpx;
 
-    &:active {
-      opacity: 0.85;
-    }
-
-    &--loading {
-      opacity: 0.6;
+    .nut-button-children {
+      font-size: 30rpx;
     }
   }
 }

@@ -40,8 +40,9 @@
     font-size: 30rpx;
     color: #1f2329;
     transition: border-color 0.2s;
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
+    // 用 rpx：designWidth=375 时 px 会被 pxtransform 按 1px→2rpx 折算，改 rpx 保持现观感
+    -webkit-backdrop-filter: blur(12rpx);
+    backdrop-filter: blur(12rpx);
     box-shadow: 0 8rpx 24rpx rgba(31, 35, 41, 0.08);
 
     &:nth-child(2n) {

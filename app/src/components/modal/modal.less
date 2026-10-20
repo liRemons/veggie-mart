@@ -1,9 +1,10 @@
 .modal {
-  // 遮罩本体由通用 Mask 组件（components/mask）渲染，
-  // 此处 className 仅作场景钩子，无场景专属样式
-
+  // 卡片承载在 NutPopup（position=center）上，遮罩与进出场动画均由 NutPopup 承担；
+  // 这里仅覆写 NutPopup 面板的宽度/圆角/内边距等设计样式
   &__card {
     width: 620rpx;
+    // NutPopup 默认 max-width(295px) 会裁掉 620rpx 卡片，这里放开
+    max-width: none;
     box-sizing: border-box;
     padding: 32rpx 32rpx;
     background: #fff;
@@ -11,16 +12,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    opacity: 0;
-    transform: translateY(24px) scale(0.96);
-    transition:
-      opacity 0.25s ease,
-      transform 0.25s ease;
-
-    &--active {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
   }
 
   &__head {

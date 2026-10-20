@@ -1,10 +1,12 @@
 import { View, Text } from '@tarojs/components'
 import Taro, { useDidShow } from '@tarojs/taro'
 import { useState } from 'react'
-import { PUBLISH_TYPE_KEY, TABBAR_CHANGE_EVENT } from '../../utils/tabbar'
+import { PUBLISH_TYPE_KEY, TabItem } from '../../utils/tabbar'
 import { openDetail } from '../../utils/detail'
 import ProductCard from '../../components/product-card/product-card'
 import JobCard, { JobItem } from '../../components/job-card/job-card'
+import PublishSheet, { PublishType } from '../../components/publish-sheet/publish-sheet'
+import TabBarNav, { FabClose } from '../../components/tab-bar-nav/tab-bar-nav'
 import './publish.less'
 
 interface PublishItem {
@@ -44,13 +46,30 @@ export default function Publish() {
   const [category, setCategory] = useState('veg')
   const [vegList, setVegList] = useState<PublishItem[]>(VEG)
   const [jobList, setJobList] = useState<(JobItem & { id: number })[]>(JOB)
+  // 「选择发布的类型」底部面板：本页 NutUI Popup（弹层标准宿主），栏内加号经 onPublish 直接控制本源
+  const [pubSheetVisible, setPubSheetVisible] = useState(false)
 
   useDidShow(() => {
+    Taro.hideTabBar({ animation: false })
     const pending = Taro.getStorageSync(PUBLISH_TYPE_KEY)
     if (pending === 'veg' || pending === 'job') setCategory(pending)
     Taro.removeStorageSync(PUBLISH_TYPE_KEY)
-    Taro.eventCenter.trigger(TABBAR_CHANGE_EVENT, 'publish')
   })
+
+  const handleChoosePublishType = (type: PublishType) => {
+    setPubSheetVisible(false)
+    // 已在发布页，选中类型直接生效（跨页场景仍走 useDidShow 的 storage 消费）
+    setCategory(type)
+  }
+
+  const handleTab = (tab: TabItem) => {
+    if (tab.key === 'publish') return
+    if (!tab.url) {
+      Taro.showToast({ title: `「${tab.label}」功能开发中`, icon: 'none' })
+      return
+    }
+    Taro.switchTab({ url: tab.url })
+  }
 
   const handleComingSoon = (name: string) => {
     Taro.showToast({ title: `「${name}」功能开发中`, icon: 'none' })
@@ -109,6 +128,16 @@ export default function Publish() {
               </View>
             ))}
       </View>
+
+      <PublishSheet visible={pubSheetVisible} onChoose={handleChoosePublishType} />
+      {/* 面板关闭按钮：位于 NutUI Overlay 之上（z 9999），与加号同位 */}
+      {pubSheetVisible ? <FabClose onClick={() => setPubSheetVisible(false)} /> : null}
+      <TabBarNav
+        active='publish'
+        publishing={pubSheetVisible}
+        onTab={handleTab}
+        onPublish={() => setPubSheetVisible(true)}
+      />
     </View>
   )
 }

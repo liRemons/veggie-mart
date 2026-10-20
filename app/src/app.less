@@ -1,1 +1,17 @@
 @import './styles/iconfont.less';
+
+// NutUI 主题覆写：主色与压暗/危险色对齐项目现有视觉（绿主色、项目红）
+// :root（H5）与 page（weapp）分开声明，避免任一选择器在当前端非法导致整条规则失效
+:root {
+  --nutui-color-primary: #07be61;
+  --nutui-color-primary-pressed: #06a354;
+  --nutui-color-danger: #fd3b3b;
+  --nutui-color-danger-pressed: #e03434;
+}
+
+page {
+  --nutui-color-primary: #07be61;
+  --nutui-color-primary-pressed: #06a354;
+  --nutui-color-danger: #fd3b3b;
+  --nutui-color-danger-pressed: #e03434;
+}

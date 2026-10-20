@@ -1,0 +1,107 @@
+.publish-sheet {
+  // NutPopup 底部面板本体：透明底（选项自身为白卡），去掉默认圆角与内边距（沿用原 tabbar 场景观感）；
+  // z-index !important 对抗组件库行内设置的 z，保证面板本体恒在自绘遮罩（1100）之上；
+  // background 加 !important 对抗 NutUI .nut-popup 默认白底（bundle 加载顺序可能导致 .nut-popup 后加载而压过本类）
+  &__popup {
+    background: transparent !important;
+    border-radius: 0;
+    padding: 0;
+    --nutui-popup-border-radius: 0;
+    z-index: 1200 !important;
+  }
+
+  // NutPopup 内置 Overlay 透传：实测未铺满底部栏区（发白），压暗改由自绘遮罩 __bg 承担；
+  // 仅保留其整屏层以维持「点击不穿透、不关闭」（closeOnOverlayClick=false）；
+  // 背景必须 !important：nut-overlay 默认半透明黑与本类同优先级、bundle 可能后加载，
+  // 不加会与自绘遮罩 __bg 叠加成双层压暗（实测点击发布时出现两层遮罩）
+  &__mask {
+    background: transparent !important;
+  }
+
+  // 自绘整屏 0.6 压暗遮罩：页面层 fixed 铺满（含底部栏区），与页面 modal 遮罩观感一致
+  &__bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1100;
+    opacity: 0;
+    pointer-events: none; // 点击交由 NutUI overlay 层拦截（不关闭）
+    transition: opacity 0.3s ease;
+
+    &--on {
+      opacity: 1;
+    }
+  }
+
+  &__sheet {
+    width: 100%;
+    padding: 40rpx 20rpx 268rpx;
+    box-sizing: border-box;
+    // 上滑/下滑动画由 NutPopup（position=bottom）自身承担，无需再对面板做 translateY
+  }
+
+  &__title {
+    display: block;
+    color: #fff;
+    font-size: 28rpx;
+    font-weight: 600;
+    margin-bottom: 32rpx;
+  }
+
+  &__options {
+    display: flex;
+    gap: 40rpx;
+  }
+
+  &__option {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20rpx;
+    padding: 30rpx 0;
+    background: #fff;
+    border: 2rpx solid #c9cdd4;
+    border-radius: 12rpx;
+    font-size: 28rpx;
+    color: #1d2129;
+    opacity: 0;
+    transform: translateY(32rpx) scale(0.8);
+    transition:
+      transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+      opacity 0.22s ease;
+
+    &:active {
+      background: #f2f3f5;
+    }
+  }
+
+  &__option-icon {
+    font-size: 48rpx;
+    line-height: 1;
+  }
+}
+
+// 打开状态（面板打开后下一帧向面板容器附加 --on）：两个选项交错弹入
+.publish-sheet__sheet--on {
+  .publish-sheet__option {
+    opacity: 1;
+    transform: none;
+
+    &:nth-child(1) {
+      transition-delay: 0.08s;
+    }
+
+    &:nth-child(2) {
+      transition-delay: 0.16s;
+    }
+
+    &:active {
+      transform: scale(0.94);
+    }
+  }
+}

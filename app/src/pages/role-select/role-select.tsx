@@ -2,11 +2,11 @@ import { View, Text } from '@tarojs/components'
 import Taro, { useLoad } from '@tarojs/taro'
 
 import Icon from '../../components/icons/Icon'
+import { HOME_URL } from '../../utils/tabbar'
 
 import './role-select.less'
 
 const ROLE_KEY = 'role'
-const HOME_URL = '/pages/index/index'
 
 const ROLES = [
   { key: 'farmer', label: '农户', desc: '卖农产品 · 招工用工', icon: 'colored-farmer-man' },
